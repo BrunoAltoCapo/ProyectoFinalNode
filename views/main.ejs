@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= Title %></title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #34495e;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        main h1 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .main-blog {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .blog {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .blog:hover {
+            transform: translateY(-5px);
+        }
+
+        .blog h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .blog p {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .blog a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .blog a:hover {
+            text-decoration: underline;
+        }
+
+        .main-botones {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .main-botones a, 
+        .main-botones button {
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .main-botones a {
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+        }
+
+        .main-botones button {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .main-botones a:hover {
+            background-color: #2980b9;
+            text-decoration: none;
+        }
+
+        .main-botones button:hover {
+            background-color: #c0392b;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background-color: #2c3e50;
+            color: white;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .main-blog {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+    <h1>DAW Blog</h1>
+    <nav>
+        <ul>
+        <% if (user) { %> <!-- Si el usuario está autenticado, mostrar las opciones para crear blog, ver productos y cerrar sesión -->
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/blogs/crear">Crear Blog</a></li>
+            <li><a href="/productos">Ver Productos</a></li>
+            <li><a href="/logout">Cerrar Sesión</a></li>
+            <li><a href="/usuarios">Ver Usuarios</a></li> 
+        <% } else { %> <!-- Si el usuario no está autenticado, mostrar opciones para iniciar sesión y registrarse -->
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/login">Iniciar Sesión</a></li>
+            <li><a href="/sign-up">Registrarse</a></li>
+        <% } %>
+        </ul>
+    </nav>
+    </header>
+    <main>
+    <h1>Blogs:</h1>
+    <br>
+    <section class="main-blog">
+    <% blogs.forEach(blog => { %>
+        <div class="blog">
+          <h2><%= blog.title %></h2>
+          <p><%= blog.snippet %></p>
+          <br>
+          <div>
+          <a href="/blogs/<%= blog._id %>">Ver más</a>
+        </div>
+          <% if (user) { %>  <!-- Solo mostrar los botones si el usuario está autenticado -->
+            <div class="main-botones">
+            <a href="/blogs/<%= blog._id %>/editar">Editar</a>
+            <form action="/blogs/<%= blog._id %>?_method=DELETE" method="POST">
+                <button type="submit">Eliminar</button>
+            </form>    
+            </div>          
+          <% } %>
+        </div>
+      <% }); %>   
+    </section>   
+    </main>
+    <footer>
+        <p>Todos los derechos reservados - DAW blog</p>
+    </footer>
+</body>
+</html>

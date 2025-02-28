@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= Title %>
+    </title>
+    <script src="https://www.paypal.com/sdk/js?client-id=<%= process.env.PAYPAL_CLIENT_ID %>"></script>
+
+</head>
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+        background-color: #f5f5f5;
+        line-height: 1.6;
+    }
+
+    header {
+        background-color: #2c3e50;
+        color: white;
+        padding: 1rem 2rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    h1 {
+        color: #2c3e50;
+        margin: 2rem;
+        text-align: center;
+        font-size: 2.5rem;
+    }
+
+    .productos-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .producto-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+
+    .producto-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .imagen-container {
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f8f9fa;
+    }
+
+    .producto-imagen {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .sin-imagen {
+        padding: 2rem;
+        color: #6c757d;
+        text-align: center;
+    }
+
+    .producto-info {
+        padding: 1.5rem;
+    }
+
+    .producto-nombre {
+        color: #2c3e50;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .producto-precio {
+        color: #2980b9;
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    .producto-descripcion {
+        color: #666;
+        margin-bottom: 1.5rem;
+    }
+
+    #paypal-button-container {
+        margin-top: 1rem;
+    }
+
+    footer {
+        text-align: center;
+        padding: 2rem;
+        background-color: #2c3e50;
+        color: white;
+        margin-top: 3rem;
+    }
+
+    @media (max-width: 768px) {
+        .productos-container {
+            grid-template-columns: 1fr;
+            padding: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin: 1rem;
+        }
+    }
+
+    nav ul {
+        list-style: none;
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    nav a {
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+
+    nav a:hover {
+        background-color: #34495e;
+    }
+</style>
+
+
+<body>
+    <header>
+        <h1 style="color: white;">DAW Blog</h1>
+        <nav>
+            <ul>
+                <% if (user) { %>
+                    <!-- Si el usuario está autenticado, mostrar las opciones para crear blog, ver productos y cerrar sesión -->
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/blogs/crear">Crear Blog</a></li>
+                    <li><a href="/productos">Ver Productos</a></li>
+                    <li><a href="/logout">Cerrar Sesión</a></li>
+                    <li><a href="/usuarios">Ver Usuarios</a></li>
+                    <% } else { %>
+                        <!-- Si el usuario no está autenticado, mostrar opciones para iniciar sesión y registrarse -->
+                        <li><a href="/">Inicio</a></li>
+                        <li><a href="/login">Iniciar Sesión</a></li>
+                        <li><a href="/sign-up">Registrarse</a></li>
+                        <% } %>
+            </ul>
+        </nav>
+    </header>
+    <h1 style="margin-left: 50px;">Lista de Productos</h1>
+    <div class="productos-container">
+        <% productos.forEach(producto=> { %>
+            <div class="producto-card">
+                <div class="imagen-container">
+                    <% if (producto.imagenUrl) { %>
+                        <img src="<%= producto.imagenUrl %>" alt="<%= producto.nombre %>" class="producto-imagen"
+                            width="100px" height="100px">
+                        <% } else { %>
+                            <div class="sin-imagen">No hay imagen</div>
+                            <% } %>
+                </div>
+                <div class="producto-info">
+                    <h2 class="producto-nombre">
+                        <%= producto.nombre %>
+                    </h2>
+                    <p class="producto-precio">
+                        <%= producto.precio %> €
+                    </p>
+                    <p class="producto-descripcion">
+                        <%= producto.descripcion %>
+                    </p>
+                    <!-- Botón de PayPal -->
+                    <div id="paypal-button-container-<%= producto.id %>"></div>
+                </div>
+            </div>
+            <!-- Script para inicializar el botón de PayPal -->
+            <script>
+                paypal.Buttons({
+                    createOrder: function (data, actions) {
+                        return actions.order.create({
+                            purchase_units: [{
+                                amount: {
+                                    value: '<%= producto.precio %>' // Precio del producto
+                                },
+                                description: '<%= producto.nombre %>' // Descripción del producto
+                            }]
+                        });
+                    },
+                    onApprove: function (data, actions) {
+                        return actions.order.capture().then(function (details) {
+                            alert('Pago completado por ' + details.payer.name.given_name);
+                            // Aquí puedes redirigir al usuario o mostrar un mensaje de éxito
+                        });
+                    }
+                }).render('#paypal-button-container-<%= producto.id %>');
+            </script>
+            <% }) %>
+    </div>
+</body>
+
+</html>

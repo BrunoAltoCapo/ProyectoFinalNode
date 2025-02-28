@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title><%= Title %></title>
+  <style>
+    * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+        background-color: #f5f5f5;
+        line-height: 1.6;
+    }
+
+    header {
+        background-color: #2c3e50;
+        color: white;
+        padding: 1rem 2rem;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+        margin-bottom: 1rem;
+        font-size: 2rem;
+    }
+
+    nav ul {
+        list-style: none;
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    nav a {
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+
+    nav a:hover {
+        background-color: #34495e;
+    }
+
+    main {
+        max-width: 400px;
+        margin: 3rem auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+    }
+
+    form {
+        margin-inline: 300px;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    label {
+        color: #2c3e50;
+        font-weight: 500;
+    }
+
+    input {
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+    }
+
+    input:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    }
+
+    button {
+        background-color: #3498db;
+        color: white;
+        padding: 0.8rem;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-top: 1rem;
+    }
+
+    button:hover {
+        background-color: #2980b9;
+    }
+
+    footer {
+        text-align: center;
+        padding: 2rem;
+        background-color: #2c3e50;
+        color: white;
+        margin-top: 3rem;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+
+    @media (max-width: 768px) {
+        nav ul {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        main {
+            margin: 2rem 1rem;
+        }
+
+        header {
+            padding: 1rem;
+        }
+    }
+</style>
+</head>
+<body>
+    <header>
+    <h1 style="color: white;" >DAW Blog</h1>
+    <nav>
+        <ul>
+        <% if (user) { %> <!-- Si el usuario está autenticado, mostrar las opciones para crear blog, ver productos y cerrar sesión -->
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/blogs/crear">Crear Blog</a></li>
+            <li><a href="/productos">Ver Productos</a></li>
+            <li><a href="/logout">Cerrar Sesión</a></li>
+            <li><a href="/usuarios">Ver Usuarios</a></li> 
+        <% } else { %> <!-- Si el usuario no está autenticado, mostrar opciones para iniciar sesión y registrarse -->
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/login">Iniciar Sesión</a></li>
+            <li><a href="/sign-up">Registrarse</a></li>
+        <% } %>
+        </ul>
+    </nav>
+    </header>
+    <h1>Crear cuenta</h1>
+    <form action="/sign-up" method="POST">
+        <label for="username">Usuario</label>
+        <input type="text" name="username" required>
+        <label for="email">Email</label>
+        <input type="email" name="email" required>
+        <label for="password">Contraseña</label>
+        <input type="password" name="password" required>
+        <button type="submit">Registrar</button>
+    </form>
+    <footer>
+        <p>Todos los derechos reservados - DAW blog</p>
+    </footer>
+</body>
+</html>
